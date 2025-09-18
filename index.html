@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estate Information Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            midnight: '#001942',
+            bronze: '#8A6A33',
+            offwhite: '#F6F3EA',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #F6F3EA;
+      color: #001942;
+    }
+    .btn-primary {
+      background-color: #8A6A33;
+      color: #F6F3EA;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover {
+      background-color: #735428;
+    }
+    .btn-secondary {
+      background-color: transparent;
+      color: #001942;
+      border: 1px solid #8A6A33;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-secondary:hover {
+      background-color: rgba(138, 106, 51, 0.1);
+    }
+    .tab-button {
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .table-input {
+      width: 100%;
+    }
+    .highlight-missing {
+      border-color: #dc2626 !important;
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25);
+    }
+    .toast {
+      min-width: 240px;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="max-w-6xl mx-auto py-10 px-4 space-y-8">
+    <header class="bg-white rounded-xl shadow-sm border border-bronze/20 p-6">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-midnight">Estate Information Form</h1>
+          <p class="mt-2 text-midnight/80">Provide details to help us administer the estate.</p>
+        </div>
+        <button id="exportTop" class="btn-primary self-start md:self-center" type="button">
+          Export All Information (CSV)
+        </button>
+      </div>
+      <div class="mt-6">
+        <label for="estateTitle" class="block text-sm font-semibold text-midnight">Estate Title (e.g., ‘Estate of Jane Smith’)</label>
+        <input id="estateTitle" name="estateTitle" type="text" class="mt-2 w-full rounded-lg border border-midnight/20 bg-offwhite px-3 py-2 focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40" placeholder="Estate of Jane Smith" required>
+      </div>
+    </header>
+
+    <div>
+      <div class="flex flex-wrap gap-3">
+        <button id="tab-intake" class="btn-primary tab-button" type="button" aria-pressed="true" data-page="intake">Marital &amp; Heirs</button>
+        <button id="tab-inventory" class="btn-secondary tab-button" type="button" aria-pressed="false" data-page="inventory">Assets &amp; Liabilities</button>
+      </div>
+    </div>
+
+    <main class="space-y-8">
+      <section id="page-intake" class="space-y-8">
+        <div class="bg-white rounded-xl shadow-sm border border-bronze/20 p-6 space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h2 class="text-2xl font-semibold text-midnight">Marital History</h2>
+            <button id="addMarriage" class="btn-secondary" type="button">Add Marriage</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-midnight/10 text-sm">
+              <thead class="bg-offwhite">
+                <tr class="text-left text-midnight/80">
+                  <th class="px-3 py-2 font-semibold">Spouse Name</th>
+                  <th class="px-3 py-2 font-semibold">Marriage Date</th>
+                  <th class="px-3 py-2 font-semibold">How Ended</th>
+                  <th class="px-3 py-2 font-semibold">End Date</th>
+                  <th class="px-3 py-2 font-semibold">Spouse Alive?</th>
+                  <th class="px-3 py-2 font-semibold">Children Count</th>
+                  <th class="px-3 py-2 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="maritalBody" class="divide-y divide-midnight/10"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-bronze/20 p-6 space-y-6">
+          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-semibold text-midnight">Distribution List (People Who May Receive Assets)</h2>
+              <p class="mt-2 text-sm text-midnight/70 max-w-2xl">Keep this lean—capture only the legally essential information needed for probate or estate administration records.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="relative group">
+                <button id="probateToggle" type="button" class="btn-secondary" aria-pressed="false">Probate Mode: Off</button>
+                <div class="absolute right-0 mt-2 w-64 rounded-lg border border-midnight/20 bg-offwhite p-3 text-xs text-midnight shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  When Probate Mode is on, at least one recipient must be listed as “Heir at Law” before exporting.
+                </div>
+              </div>
+              <button id="addRecipient" class="btn-secondary" type="button">Add Recipient</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-midnight/10 text-sm">
+              <thead class="bg-offwhite">
+                <tr class="text-left text-midnight/80">
+                  <th class="px-3 py-2 font-semibold">Full Name / Entity<span class="text-red-500">*</span></th>
+                  <th class="px-3 py-2 font-semibold">Relationship<span class="text-red-500">*</span></th>
+                  <th class="px-3 py-2 font-semibold">Legal Role<span class="text-red-500">*</span></th>
+                  <th class="px-3 py-2 font-semibold">Status<span class="text-red-500">*</span></th>
+                  <th class="px-3 py-2 font-semibold">Capacity / Age<span class="text-red-500">*</span></th>
+                  <th class="px-3 py-2 font-semibold">Address (City/State OK)<span class="text-red-500">*</span></th>
+                  <th class="px-3 py-2 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="distributionBody" class="divide-y divide-midnight/10"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-inventory" class="hidden space-y-8">
+        <div class="bg-white rounded-xl shadow-sm border border-bronze/20 p-6 space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h2 class="text-2xl font-semibold text-midnight">Assets</h2>
+            <button id="addAsset" class="btn-secondary" type="button">Add Asset</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-midnight/10 text-sm">
+              <thead class="bg-offwhite">
+                <tr class="text-left text-midnight/80">
+                  <th class="px-3 py-2 font-semibold">Description</th>
+                  <th class="px-3 py-2 font-semibold">Type</th>
+                  <th class="px-3 py-2 font-semibold">Acct Last 4 / Parcel #</th>
+                  <th class="px-3 py-2 font-semibold">Value ($)</th>
+                  <th class="px-3 py-2 font-semibold">Notes</th>
+                  <th class="px-3 py-2 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="assetsBody" class="divide-y divide-midnight/10"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-bronze/20 p-6 space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h2 class="text-2xl font-semibold text-midnight">Liabilities</h2>
+            <button id="addLiability" class="btn-secondary" type="button">Add Liability</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-midnight/10 text-sm">
+              <thead class="bg-offwhite">
+                <tr class="text-left text-midnight/80">
+                  <th class="px-3 py-2 font-semibold">Creditor / Liability Description</th>
+                  <th class="px-3 py-2 font-semibold">Type</th>
+                  <th class="px-3 py-2 font-semibold">Claim ID / Acct #</th>
+                  <th class="px-3 py-2 font-semibold">Balance Owed ($)</th>
+                  <th class="px-3 py-2 font-semibold">Notes</th>
+                  <th class="px-3 py-2 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="liabilitiesBody" class="divide-y divide-midnight/10"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="flex justify-end">
+      <button id="exportBottom" class="btn-primary" type="button">Review &amp; Export CSV</button>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed top-6 right-6 flex flex-col gap-2 z-50"></div>
+
+  <template id="deleteButtonTemplate">
+    <button type="button" class="text-sm font-semibold text-red-600 hover:text-red-700">Remove</button>
+  </template>
+
+  <script>
+    const pages = {
+      intake: document.getElementById('page-intake'),
+      inventory: document.getElementById('page-inventory')
+    };
+
+    const tabs = {
+      intake: document.getElementById('tab-intake'),
+      inventory: document.getElementById('tab-inventory')
+    };
+
+    function showPage(pageKey) {
+      Object.keys(pages).forEach((key) => {
+        if (key === pageKey) {
+          pages[key].classList.remove('hidden');
+          tabs[key].classList.remove('btn-secondary');
+          tabs[key].classList.add('btn-primary');
+          tabs[key].setAttribute('aria-pressed', 'true');
+        } else {
+          pages[key].classList.add('hidden');
+          tabs[key].classList.remove('btn-primary');
+          tabs[key].classList.add('btn-secondary');
+          tabs[key].setAttribute('aria-pressed', 'false');
+        }
+      });
+    }
+
+    tabs.intake.addEventListener('click', () => showPage('intake'));
+    tabs.inventory.addEventListener('click', () => showPage('inventory'));
+
+    function createInput(type, options = {}) {
+      const input = document.createElement(type === 'select' ? 'select' : 'input');
+      input.className = 'table-input rounded-md border border-midnight/20 bg-white px-2 py-1 focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40';
+      if (type !== 'select') {
+        input.type = options.inputType || 'text';
+      }
+      if (options.placeholder) {
+        input.placeholder = options.placeholder;
+      }
+      if (options.min !== undefined) {
+        input.min = options.min;
+      }
+      if (options.max !== undefined) {
+        input.max = options.max;
+      }
+      if (options.step !== undefined) {
+        input.step = options.step;
+      }
+      if (options.required) {
+        input.dataset.required = 'true';
+      }
+      if (options.title) {
+        input.title = options.title;
+      }
+      if (type === 'select' && Array.isArray(options.choices)) {
+        const placeholderOption = document.createElement('option');
+        placeholderOption.value = '';
+        placeholderOption.textContent = 'Select option';
+        input.appendChild(placeholderOption);
+        options.choices.forEach((choice) => {
+          const option = document.createElement('option');
+          option.value = choice.value;
+          option.textContent = choice.label;
+          input.appendChild(option);
+        });
+      }
+      input.addEventListener('input', () => {
+        input.classList.remove('highlight-missing');
+      });
+      input.addEventListener('change', () => {
+        input.classList.remove('highlight-missing');
+      });
+      return input;
+    }
+
+    function createDeleteButton() {
+      const template = document.getElementById('deleteButtonTemplate');
+      return template.content.firstElementChild.cloneNode(true);
+    }
+
+    function createTableRow(cells) {
+      const tr = document.createElement('tr');
+      cells.forEach((cellContent) => {
+        const td = document.createElement('td');
+        td.className = 'px-3 py-2 align-top';
+        if (cellContent instanceof HTMLElement) {
+          td.appendChild(cellContent);
+        } else if (Array.isArray(cellContent)) {
+          cellContent.forEach((element) => td.appendChild(element));
+        } else {
+          td.textContent = cellContent;
+        }
+        tr.appendChild(td);
+      });
+      return tr;
+    }
+
+    const maritalBody = document.getElementById('maritalBody');
+    const distributionBody = document.getElementById('distributionBody');
+    const assetsBody = document.getElementById('assetsBody');
+    const liabilitiesBody = document.getElementById('liabilitiesBody');
+
+    document.getElementById('addMarriage').addEventListener('click', () => {
+      const spouseInput = createInput('input', { placeholder: 'Spouse Name' });
+      const marriageDateInput = createInput('input', { inputType: 'date' });
+      const howEndedSelect = createInput('select', {
+        choices: [
+          { value: 'Still married at death', label: 'Still married at death' },
+          { value: 'Death', label: 'Death' },
+          { value: 'Divorce', label: 'Divorce' },
+          { value: 'Annulment', label: 'Annulment' },
+          { value: 'Separated', label: 'Separated' }
+        ]
+      });
+      const endDateInput = createInput('input', { inputType: 'date' });
+      const aliveSelect = createInput('select', {
+        choices: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]
+      });
+      const childrenInput = createInput('input', { inputType: 'number', min: 0, max: 20, step: 1, placeholder: '0' });
+
+      const deleteButton = createDeleteButton();
+      deleteButton.addEventListener('click', () => tr.remove());
+
+      const tr = createTableRow([
+        spouseInput,
+        marriageDateInput,
+        howEndedSelect,
+        endDateInput,
+        aliveSelect,
+        childrenInput,
+        (() => {
+          const container = document.createElement('div');
+          container.className = 'flex justify-end';
+          container.appendChild(deleteButton);
+          return container;
+        })()
+      ]);
+
+      maritalBody.appendChild(tr);
+    });
+
+    document.getElementById('addRecipient').addEventListener('click', () => {
+      const nameInput = createInput('input', { placeholder: 'Full Name / Entity', required: true });
+      const relationshipSelect = createInput('select', {
+        required: true,
+        choices: [
+          'Spouse/Partner', 'Child', 'Step-Child', 'Parent', 'Sibling', 'Grandchild', 'Other Family', 'Friend', 'Charity/Nonprofit', 'Other Entity'
+        ].map((label) => ({ value: label, label }))
+      });
+      const legalRoleSelect = createInput('select', {
+        required: true,
+        choices: [
+          'Heir at Law', 'Named in Will', 'Named in Trust', 'Non-Probate Designee (POD/TOD/JTWROS)', 'Unknown'
+        ].map((label) => ({ value: label, label }))
+      });
+      const statusSelect = createInput('select', {
+        required: true,
+        choices: [
+          'Alive', 'Deceased (with descendants)', 'Deceased (no descendants)', 'Unknown'
+        ].map((label) => ({ value: label, label }))
+      });
+      const capacitySelect = createInput('select', {
+        required: true,
+        title: 'Use “Protected Person” only when a guardian or conservator has been court-appointed. “Minor” follows the state age of majority.',
+        choices: [
+          'Adult', 'Minor (under 18)', 'Protected Person (guardian/conservator)', 'Unknown'
+        ].map((label) => ({ value: label, label }))
+      });
+      const addressInput = createInput('input', { placeholder: 'City, State', required: true });
+
+      const deleteButton = createDeleteButton();
+      const tr = createTableRow([
+        nameInput,
+        relationshipSelect,
+        legalRoleSelect,
+        statusSelect,
+        capacitySelect,
+        addressInput,
+        (() => {
+          const container = document.createElement('div');
+          container.className = 'flex justify-end';
+          container.appendChild(deleteButton);
+          return container;
+        })()
+      ]);
+      deleteButton.addEventListener('click', () => tr.remove());
+      distributionBody.appendChild(tr);
+    });
+
+    const assetTypeChoices = [
+      'Bank Account',
+      'Brokerage',
+      '401(k)/IRA',
+      'Life Insurance (Cash Value)',
+      'Real Estate',
+      'Vehicle',
+      'Business Interest',
+      'Personal Property',
+      'Other'
+    ].map((label) => ({ value: label, label }));
+
+    document.getElementById('addAsset').addEventListener('click', () => {
+      const descriptionInput = createInput('input', { placeholder: 'Description' });
+
+      const typeSelect = createInput('select', { choices: assetTypeChoices });
+      const otherInput = createInput('input', { placeholder: 'Specify other…' });
+      otherInput.classList.add('mt-2');
+      otherInput.classList.add('hidden');
+
+      typeSelect.addEventListener('change', () => {
+        if (typeSelect.value === 'Other') {
+          otherInput.classList.remove('hidden');
+        } else {
+          otherInput.classList.add('hidden');
+          otherInput.value = '';
+        }
+      });
+
+      const acctInput = createInput('input', { placeholder: 'Account Last 4 / Parcel #' });
+      const valueInput = createInput('input', { inputType: 'number', min: 0, step: 0.01, placeholder: '0.00' });
+      const notesInput = createInput('input', { placeholder: 'Notes' });
+
+      const deleteButton = createDeleteButton();
+      const tr = createTableRow([
+        descriptionInput,
+        (() => {
+          const container = document.createElement('div');
+          container.appendChild(typeSelect);
+          container.appendChild(otherInput);
+          return container;
+        })(),
+        acctInput,
+        valueInput,
+        notesInput,
+        (() => {
+          const container = document.createElement('div');
+          container.className = 'flex justify-end';
+          container.appendChild(deleteButton);
+          return container;
+        })()
+      ]);
+      deleteButton.addEventListener('click', () => tr.remove());
+      assetsBody.appendChild(tr);
+    });
+
+    const liabilityTypeChoices = [
+      'Mortgage / Home-equity',
+      'Credit Card',
+      'Auto Loan',
+      'Student Loan',
+      'Medical Bill',
+      'Personal Loan',
+      'Utility Bill',
+      'Tax Debt',
+      'Other'
+    ].map((label) => ({ value: label, label }));
+
+    document.getElementById('addLiability').addEventListener('click', () => {
+      const descriptionInput = createInput('input', { placeholder: 'Creditor / Liability' });
+      const typeSelect = createInput('select', { choices: liabilityTypeChoices });
+      const claimInput = createInput('input', { placeholder: 'Claim ID / Account #' });
+      const balanceInput = createInput('input', { inputType: 'number', min: 0, step: 0.01, placeholder: '0.00' });
+      const notesInput = createInput('input', { placeholder: 'Notes' });
+
+      const deleteButton = createDeleteButton();
+      const tr = createTableRow([
+        descriptionInput,
+        typeSelect,
+        claimInput,
+        balanceInput,
+        notesInput,
+        (() => {
+          const container = document.createElement('div');
+          container.className = 'flex justify-end';
+          container.appendChild(deleteButton);
+          return container;
+        })()
+      ]);
+      deleteButton.addEventListener('click', () => tr.remove());
+      liabilitiesBody.appendChild(tr);
+    });
+
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast rounded-lg border px-4 py-3 shadow-lg text-sm font-medium ${type === 'error' ? 'border-red-400 bg-white text-red-700' : type === 'success' ? 'border-emerald-400 bg-white text-emerald-700' : 'border-midnight/20 bg-white text-midnight'}`;
+      toast.textContent = message;
+      document.getElementById('toastContainer').appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+        toast.classList.add('transition');
+        toast.classList.add('duration-500');
+      }, 3200);
+      setTimeout(() => toast.remove(), 3800);
+    }
+
+    const probateToggle = document.getElementById('probateToggle');
+    let probateMode = false;
+    probateToggle.addEventListener('click', () => {
+      probateMode = !probateMode;
+      probateToggle.textContent = probateMode ? 'Probate Mode: On' : 'Probate Mode: Off';
+      probateToggle.setAttribute('aria-pressed', probateMode ? 'true' : 'false');
+      probateToggle.classList.toggle('btn-primary', probateMode);
+      probateToggle.classList.toggle('btn-secondary', !probateMode);
+      if (probateMode) {
+        showToast('Probate Mode enabled. Ensure at least one “Heir at Law” before exporting.', 'info');
+      }
+    });
+
+    function sanitizeValue(value) {
+      return value.trim();
+    }
+
+    function collectTableData(tbody, mapper) {
+      return Array.from(tbody.querySelectorAll('tr')).map((row) => mapper(row));
+    }
+
+    function validateRequiredInputs(inputs) {
+      let valid = true;
+      inputs.forEach((input) => {
+        const value = sanitizeValue(input.value || '');
+        if (!value) {
+          input.classList.add('highlight-missing');
+          valid = false;
+        }
+      });
+      return valid;
+    }
+
+    function toSnakeCase(value) {
+      return value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .replace(/_{2,}/g, '_');
+    }
+
+    function formatCurrencyValue(value) {
+      return value ? Number(value).toFixed(2) : '';
+    }
+
+    function escapeCSVValue(value) {
+      if (value === undefined || value === null) return '';
+      const stringValue = String(value);
+      if (/[",\n]/.test(stringValue)) {
+        return '"' + stringValue.replace(/"/g, '""') + '"';
+      }
+      return stringValue;
+    }
+
+    function generateCSV(rows) {
+      return rows.map((row) => row.map(escapeCSVValue).join(',')).join('\n');
+    }
+
+    function buildCSV() {
+      const estateTitleInput = document.getElementById('estateTitle');
+      const estateTitle = sanitizeValue(estateTitleInput.value);
+      let valid = true;
+
+      if (!estateTitle) {
+        estateTitleInput.classList.add('highlight-missing');
+        showToast('Estate Title is required before exporting.', 'error');
+        valid = false;
+      }
+
+      const distributionRows = Array.from(distributionBody.querySelectorAll('tr'));
+      let hasHeirAtLaw = false;
+      let distributionValid = true;
+
+      distributionRows.forEach((row) => {
+        const inputs = Array.from(row.querySelectorAll('input, select'));
+        const rowValid = validateRequiredInputs(inputs);
+        if (!rowValid) {
+          distributionValid = false;
+        }
+        const legalRoleSelect = row.querySelector('select:nth-of-type(2)');
+        if (legalRoleSelect && legalRoleSelect.value === 'Heir at Law') {
+          hasHeirAtLaw = true;
+        }
+      });
+
+      if (!distributionValid) {
+        showToast('Distribution List entries require all fields before exporting.', 'error');
+        valid = false;
+      }
+
+      if (probateMode && !hasHeirAtLaw) {
+        showToast('Probate Mode requires at least one recipient marked as “Heir at Law.”', 'error');
+        valid = false;
+      }
+
+      if (!valid) {
+        return null;
+      }
+
+      const csvRows = [];
+      csvRows.push(['Estate Title', estateTitle]);
+      csvRows.push([]);
+
+      const maritalData = collectTableData(maritalBody, (row) => {
+        const cells = row.querySelectorAll('input, select');
+        return [
+          sanitizeValue(cells[0]?.value || ''),
+          sanitizeValue(cells[1]?.value || ''),
+          sanitizeValue(cells[2]?.value || ''),
+          sanitizeValue(cells[3]?.value || ''),
+          sanitizeValue(cells[4]?.value || ''),
+          sanitizeValue(cells[5]?.value || '')
+        ];
+      });
+      csvRows.push(['Spouse Full Name', 'Marriage Date', 'How Ended', 'End Date', 'Spouse Alive?', 'Children Count']);
+      maritalData.forEach((row) => csvRows.push(row));
+      csvRows.push([]);
+
+      const assetData = collectTableData(assetsBody, (row) => {
+        const cellContainers = row.querySelectorAll('td');
+        const typeSelect = cellContainers[1]?.querySelector('select');
+        const otherInput = cellContainers[1]?.querySelector('input');
+        let typeValue = sanitizeValue(typeSelect?.value || '');
+        if (typeValue === 'Other') {
+          const otherText = sanitizeValue(otherInput?.value || '');
+          typeValue = otherText ? `Other - ${otherText}` : 'Other';
+        }
+        return [
+          sanitizeValue(cellContainers[0]?.querySelector('input')?.value || ''),
+          typeValue,
+          sanitizeValue(cellContainers[2]?.querySelector('input')?.value || ''),
+          sanitizeValue(cellContainers[3]?.querySelector('input')?.value || ''),
+          sanitizeValue(cellContainers[4]?.querySelector('input')?.value || '')
+        ];
+      });
+      csvRows.push(['Description', 'Type', 'Acct Last 4 / Parcel #', 'Value ($)', 'Notes']);
+      assetData.forEach((row) => csvRows.push(row));
+      csvRows.push([]);
+
+      const liabilityData = collectTableData(liabilitiesBody, (row) => {
+        const cells = row.querySelectorAll('input, select');
+        return [
+          sanitizeValue(cells[0]?.value || ''),
+          sanitizeValue(cells[1]?.value || ''),
+          sanitizeValue(cells[2]?.value || ''),
+          sanitizeValue(cells[3]?.value || ''),
+          sanitizeValue(cells[4]?.value || '')
+        ];
+      });
+      csvRows.push(['Creditor / Liability Description', 'Type', 'Claim ID / Acct #', 'Balance Owed ($)', 'Notes']);
+      liabilityData.forEach((row) => csvRows.push(row));
+      csvRows.push([]);
+
+      const distributionData = collectTableData(distributionBody, (row) => {
+        const inputs = row.querySelectorAll('input, select');
+        return Array.from(inputs).map((input) => sanitizeValue(input.value || ''));
+      });
+      csvRows.push(['Full Name / Entity', 'Relationship', 'Legal Role', 'Status', 'Capacity / Age', 'Address (City/State OK)']);
+      distributionData.forEach((row) => csvRows.push(row));
+
+      return { csvRows, estateTitle };
+    }
+
+    function downloadCSV() {
+      const csvData = buildCSV();
+      if (!csvData) {
+        return;
+      }
+      const { csvRows, estateTitle } = csvData;
+      const csvContent = generateCSV(csvRows);
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const datePart = new Date().toISOString().split('T')[0];
+      const sanitizedTitle = estateTitle ? toSnakeCase(estateTitle) : '';
+      const fileName = sanitizedTitle
+        ? `Estate_Intake_${sanitizedTitle}_${datePart}.csv`
+        : `Estate_Intake_${datePart}.csv`;
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName);
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV export generated successfully.', 'success');
+    }
+
+    document.getElementById('exportTop').addEventListener('click', downloadCSV);
+    document.getElementById('exportBottom').addEventListener('click', downloadCSV);
+  </script>
+</body>
+</html>
