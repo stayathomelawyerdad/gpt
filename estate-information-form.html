@@ -1,0 +1,442 @@
+<!-- Paste this entire block into a Squarespace Code block -->
+<div id="cifEstateApp" role="application" aria-label="Estate Information Form">
+  <!-- Brand Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== Brand System (scoped) ===== */
+    #cifEstateApp{
+      --navy:#0f1b2c; --slate:#3f4a5a; --bronze:#8a6a33; --off:#f6f3ea; --white:#FFFFFF; --charcoal:#111111; --muted:#eae6d9; --line:#e6e1d5; --err:#DC2626;
+      --heading-font:"Libre Baskerville","Cormorant Garamond",Georgia,serif;
+      --body-font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto;
+      font:16px/1.6 var(--body-font); color:var(--charcoal); background:var(--white);
+    }
+    #cifEstateApp *{box-sizing:border-box}
+    #cifEstateApp .wrap{max-width:1080px;margin:32px auto;padding:0 18px}
+
+    /* Headings & body (consistent) */
+    #cifEstateApp h1,#cifEstateApp h2{font-family:var(--heading-font); letter-spacing:.0125em; color:var(--navy)}
+    #cifEstateApp h1{font-weight:700;font-size:30px;line-height:1.2;margin:0}
+    #cifEstateApp h2{font-weight:700;font-size:22px;line-height:1.3;margin:0}
+    #cifEstateApp label{font-family:var(--body-font);font-weight:600;font-size:13px;margin-bottom:6px;display:block;color:var(--slate)}
+    #cifEstateApp input[type=text],#cifEstateApp input[type=number],#cifEstateApp input[type=date],#cifEstateApp select,#cifEstateApp textarea{
+      width:100%;padding:12px 14px;border:1px solid #cfc8b8;border-radius:12px;background:#fff;font:inherit;font-weight:500;color:var(--charcoal)
+    }
+    #cifEstateApp input[type=number]{text-align:right}
+    #cifEstateApp .hint{font-size:12px;color:#5f5b4f}
+    #cifEstateApp .row{display:grid;gap:12px}
+    #cifEstateApp .row-2{grid-template-columns:1fr 1fr}
+    @media (max-width:760px){#cifEstateApp .row-2{grid-template-columns:1fr}}
+
+    /* Intro */
+    #cifEstateApp .intro{background:var(--off);border-radius:18px;padding:26px 28px;box-shadow:0 16px 40px rgba(15,27,44,.08);margin-bottom:26px;border:1px solid var(--line)}
+    #cifEstateApp .intro p{margin:12px 0 0;font-size:15px;color:#343026}
+
+    /* Buttons / tabs */
+    #cifEstateApp .btn{appearance:none;border:0;border-radius:12px;padding:11px 16px;font-weight:600;cursor:pointer;transition:transform .02s ease,box-shadow .2s,outline-color .2s;background:var(--white);color:var(--navy);border:1px solid #d7d3c5}
+    #cifEstateApp .btn:active{transform:translateY(1px)}
+    #cifEstateApp .btn:focus-visible{outline:3px solid var(--slate);outline-offset:2px}
+    #cifEstateApp .btn-primary{background:var(--bronze);color:#fff;border-color:var(--bronze)}
+    #cifEstateApp .btn-primary:hover{box-shadow:0 0 0 3px rgba(15,27,44,.12)}
+    #cifEstateApp .btn-icon{padding:9px 12px;border-radius:10px;background:#fff}
+    #cifEstateApp .tab{padding:12px 16px;border-radius:999px;border:1px solid #d7d3c5;background:#fff;color:var(--navy);font-weight:600;justify-content:center}
+    #cifEstateApp .tab[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+    #cifEstateApp nav.tabs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+
+    /* Callout & step bar */
+    #cifEstateApp .callout{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 22px;box-shadow:0 10px 26px rgba(15,27,44,.05)}
+    #cifEstateApp .stepbar{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 2px}
+    #cifEstateApp .step{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #d7d3c5;border-radius:999px;background:#fff;color:var(--navy);font-weight:600;text-decoration:none}
+    #cifEstateApp .step .num{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:999px;background:var(--bronze);color:#fff;font-size:12px}
+
+    /* Cards / Sections */
+    #cifEstateApp .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 36px rgba(15,27,44,.08);padding:22px;margin-bottom:24px}
+    #cifEstateApp .section-hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    #cifEstateApp .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    #cifEstateApp .badge.req{background:var(--err);color:#fff}
+    #cifEstateApp .badge.rec{background:var(--slate);color:#fff}
+    #cifEstateApp .pill{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid #d7d3c5;background:#fff;color:var(--navy);font-size:12px;font-weight:700}
+    #cifEstateApp .exportbar{display:flex;justify-content:center;margin:32px 0 40px}
+
+    /* Tables */
+    #cifEstateApp table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    #cifEstateApp thead th{background:var(--navy);color:#fff;padding:12px 12px;border-top-left-radius:12px;border-top-right-radius:12px;font-family:var(--body-font);font-weight:600;font-size:13px;text-align:left}
+    #cifEstateApp tbody td{background:#fff;padding:10px;border:1px solid #eee8dc;font-family:var(--body-font);font-weight:500;font-size:14px}
+    #cifEstateApp tbody tr td:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px}
+    #cifEstateApp tbody tr td:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px}
+    #cifEstateApp tbody tr:hover td{box-shadow:0 1px 0 var(--muted) inset}
+    #cifEstateApp .row-actions{display:flex;gap:6px;align-items:center;justify-content:center}
+
+    /* Toast & Modal */
+    #cifEstateApp .toast{position:fixed;right:16px;bottom:16px;max-width:380px;background:#fff;border:1px solid #f0ece1;border-left:6px solid var(--err);border-radius:12px;padding:12px 14px;box-shadow:0 10px 34px rgba(0,0,0,.14);font-size:14px;display:none;z-index:50}
+    #cifEstateApp .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:60}
+    #cifEstateApp .modal[open]{display:flex}
+    #cifEstateApp .dialog{background:#fff;width:min(900px,92vw);max-height:82vh;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);display:flex;flex-direction:column}
+    #cifEstateApp .dialog-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+    #cifEstateApp .dialog-bd{padding:0 16px 16px;overflow:auto}
+    #cifEstateApp pre{background:#0b1220;color:#e6edf3;border-radius:12px;padding:14px;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
+
+    /* A11y / Errors */
+    #cifEstateApp .highlight-missing{outline:2px solid var(--err);box-shadow:0 0 0 4px rgba(220,38,38,.1)}
+    @media (prefers-reduced-motion:reduce){#cifEstateApp .btn{transition:none}}
+  </style>
+
+  <div class="wrap">
+    <section class="intro" aria-label="Estate intake overview">
+      <h1>Estate Information Form</h1>
+      <p>Provide the information below so our team can prepare an accurate estate intake summary for you. Complete each required section before exporting.</p>
+    </section>
+
+    <!-- Global Title -->
+    <section class="card" aria-labelledby="ea-title-label">
+      <label id="ea-title-label" for="ea-estateTitle">Estate Title (e.g., “Estate of Jane Smith”)</label>
+      <input id="ea-estateTitle" type="text" placeholder="Estate of Jane Smith" required/>
+      <div class="hint">Used in CSV header and the export filename.</div>
+    </section>
+
+    <!-- Tabs -->
+    <nav class="tabs" aria-label="Section Tabs">
+      <button id="ea-tab-intake" class="tab" aria-pressed="true" onclick="EA_showPage('intake')">Marital &amp; Heirs</button>
+      <button id="ea-tab-inventory" class="tab" aria-pressed="false" onclick="EA_showPage('inventory')">Assets &amp; Liabilities</button>
+    </nav>
+
+    <!-- Callout + Step bar -->
+    <div class="callout" role="note" aria-label="What to complete">
+      <div class="stepbar">
+        <a class="step" href="#sec-beneficiaries"><span class="num">1</span> Beneficiaries (Required)</a>
+        <a class="step" href="#sec-inventory"><span class="num">2</span> Assets &amp; Liabilities (Strongly recommended)</a>
+      </div>
+      <div class="hint">Finish Step 1 to enable a clean export. Step 2 helps create a complete inventory for our planning team.</div>
+    </div>
+
+    <!-- Intake Page -->
+    <div id="ea-page-intake">
+      <!-- Marital History -->
+      <section class="card" aria-labelledby="ea-marital-h">
+        <div class="section-hd">
+          <h2 id="ea-marital-h">Marital History</h2>
+          <span id="ea-marital-status" class="pill">0 entries</span>
+        </div>
+        <div class="hint">Soft validation: blanks allowed (does not block export).</div>
+        <div style="text-align:right;margin:8px 0 10px">
+          <button class="btn btn-icon" onclick="EA_addMarriageRow()">＋ Add Marriage</button>
+        </div>
+        <table aria-label="Marital History Table">
+          <thead><tr>
+            <th>Spouse Name</th><th>Marriage Date</th><th>How Ended</th><th>End Date</th>
+            <th>Spouse Alive?</th><th>Children Count</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="ea-maritalBody"></tbody>
+        </table>
+      </section>
+
+      <!-- Distribution List / Beneficiaries -->
+      <section class="card" id="sec-beneficiaries" aria-labelledby="ea-dl-h">
+        <div class="section-hd">
+          <h2 id="ea-dl-h">Beneficiaries &amp; Interested Parties</h2>
+          <span class="badge req">Required</span>
+          <span id="ea-dl-status" class="pill">0 complete • Heir at Law: No</span>
+        </div>
+        <div class="hint" style="margin-bottom:8px">All six fields are required per row. Include every person or entity who should receive communication.</div>
+        <div style="text-align:right;margin:8px 0 10px">
+          <button class="btn btn-icon" onclick="EA_addRecipientRow()">＋ Add Recipient</button>
+        </div>
+        <table aria-label="Distribution List Table">
+          <thead><tr title="People-first guidance">
+            <th>Full Name / Entity</th><th>Relationship</th><th>Legal Role</th>
+            <th>Status</th><th>Capacity / Age</th><th>Address (City/State OK)</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="ea-recipientBody"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- Inventory Page -->
+    <div id="ea-page-inventory" style="display:none">
+      <section class="card" id="sec-inventory" aria-labelledby="ea-assets-h">
+        <div class="section-hd">
+          <h2 id="ea-assets-h">Assets</h2>
+          <span class="badge rec">Strongly Recommended</span>
+          <span id="ea-assets-status" class="pill">0 items</span>
+        </div>
+        <div class="hint">If “Type” = Other, a text field appears; “Value ($)” accepts decimals.</div>
+        <div style="text-align:right;margin:8px 0 10px">
+          <button class="btn btn-icon" onclick="EA_addAssetRow()">＋ Add Asset</button>
+        </div>
+        <table aria-label="Assets Table">
+          <thead><tr>
+            <th>Description</th><th>Type</th><th>Acct Last 4 / Parcel #</th><th>Value ($)</th><th>Notes</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="ea-assetBody"></tbody>
+        </table>
+      </section>
+
+      <section class="card" aria-labelledby="ea-liab-h">
+        <div class="section-hd">
+          <h2 id="ea-liab-h">Liabilities</h2>
+          <span class="badge rec">Strongly Recommended</span>
+          <span id="ea-liab-status" class="pill">0 debts</span>
+        </div>
+        <div style="text-align:right;margin:8px 0 10px">
+          <button class="btn btn-icon" onclick="EA_addLiabilityRow()">＋ Add Liability</button>
+        </div>
+        <table aria-label="Liabilities Table">
+          <thead><tr>
+            <th>Creditor / Liability Description</th><th>Type</th><th>Claim ID / Acct #</th><th>Balance Owed ($)</th><th>Notes</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="ea-liabilityBody"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- Export -->
+    <div class="exportbar">
+      <button class="btn btn-primary" onclick="EA_openPreview()">Review &amp; Export CSV</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="ea-toast" class="toast" role="status" aria-live="assertive"></div>
+
+  <!-- Preview Modal -->
+  <div id="ea-modal" class="modal" aria-hidden="true">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="ea-modal-title">
+      <div class="dialog-hd">
+        <strong id="ea-modal-title">CSV Preview</strong>
+        <div>
+          <button class="btn" onclick="EA_closePreview()">Close</button>
+          <button class="btn btn-primary" onclick="EA_exportCSV()">Download CSV</button>
+        </div>
+      </div>
+      <div class="dialog-bd">
+        <pre id="ea-preview" tabindex="0" aria-label="CSV text preview"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ===== Helpers (scoped) ===== */
+  const EA = (sel,root=document)=>root.querySelector(sel);
+  const EAA = (sel,root=document)=>Array.from(root.querySelectorAll(sel));
+  const EAopt=(v,t=v)=>`<option value="${v}">${t}</option>`;
+  const EA_REL = ["Spouse/Partner","Child","Step-Child","Parent","Sibling","Grandchild","Other Family","Friend","Charity/Nonprofit","Other Entity"];
+  const EA_ROLE= ["Heir at Law","Named in Will","Named in Trust","Non-Probate Designee (POD/TOD/JTWROS)","Unknown"];
+  const EA_STAT= ["Alive","Deceased (with descendants)","Deceased (no descendants)","Unknown"];
+  const EA_CAP = ["Adult","Minor (under 18)","Protected Person (guardian/conservator)","Unknown"];
+  const EA_AT  = ["Bank Account","Brokerage","401(k)/IRA","Life Insurance (Cash Value)","Real Estate","Vehicle","Business Interest","Personal Property","Other"];
+  const EA_LT  = ["Mortgage / Home-equity","Credit Card","Auto Loan","Student Loan","Medical Bill","Personal Loan","Utility Bill","Tax Debt","Other"];
+
+  /* Toast */
+  function EA_toast(msg){const t=EA('#ea-toast');t.textContent=msg;t.style.display='block';t.setAttribute('aria-hidden','false');clearTimeout(t._h);t._h=setTimeout(()=>{t.style.display='none';t.setAttribute('aria-hidden','true')},4200);}
+
+  /* Tabs */
+  function EA_showPage(which){
+    const onIntake = which==='intake';
+    EA('#ea-page-intake').style.display = onIntake ? '' : 'none';
+    EA('#ea-page-inventory').style.display = onIntake ? 'none' : '';
+    EA('#ea-tab-intake').setAttribute('aria-pressed', onIntake?'true':'false');
+    EA('#ea-tab-inventory').setAttribute('aria-pressed', onIntake?'false':'true');
+  }
+
+  /* Clear errors */
+  function EA_clearErrors(){EAA('.highlight-missing',EA('#cifEstateApp')).forEach(el=>el.classList.remove('highlight-missing'));}
+
+  /* Row Builders */
+  function EA_iconDelete(){return `<button class="btn btn-icon" title="Delete row" onclick="EA_delRow(this)">✕</button>`}
+  function EA_addMarriageRow(){
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input type="text" placeholder="Name"></td>
+      <td><input type="date"></td>
+      <td><select>${["Still married at death","Death","Divorce","Annulment","Separated"].map(v=>EAopt(v)).join("")}</select></td>
+      <td><input type="date"></td>
+      <td><select>${["Yes","No"].map(v=>EAopt(v)).join("")}</select></td>
+      <td><input type="number" min="0" max="20" step="1" value="0"></td>
+      <td class="row-actions">${EA_iconDelete()}</td>`;
+    EA('#ea-maritalBody').appendChild(tr); EA_updateStatus();
+  }
+  function EA_addRecipientRow(){
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input required type="text" placeholder="Full name or entity"></td>
+      <td><select required>${EA_REL.map(v=>EAopt(v)).join("")}</select></td>
+      <td><select required>${EA_ROLE.map(v=>EAopt(v)).join("")}</select></td>
+      <td><select required>${EA_STAT.map(v=>EAopt(v)).join("")}</select></td>
+      <td><select required title="Use ‘Protected Person’ only if court-appointed guardian/conservator; ‘Minor’ per Illinois age of majority.">${EA_CAP.map(v=>EAopt(v)).join("")}</select></td>
+      <td><input required type="text" placeholder="City, ST"></td>
+      <td class="row-actions">${EA_iconDelete()}</td>`;
+    EA('#ea-recipientBody').appendChild(tr); EA_updateStatus();
+  }
+  function EA_addAssetRow(){
+    const tr=document.createElement('tr');
+    const id = 'ea_o_'+Math.random().toString(36).slice(2,7);
+    tr.innerHTML=`
+      <td><input type="text" placeholder="Description"></td>
+      <td>
+        <div>
+          <select onchange="EA_toggleOther('${id}',this)">${EA_AT.map(v=>EAopt(v)).join("")}</select>
+          <input id="${id}" type="text" placeholder="Specify other…" style="display:none;margin-top:6px">
+        </div>
+      </td>
+      <td><input type="text" placeholder="1234 / PIN"></td>
+      <td><input type="number" min="0" step="0.01" placeholder="0.00"></td>
+      <td><input type="text" placeholder="Notes"></td>
+      <td class="row-actions">${EA_iconDelete()}</td>`;
+    EA('#ea-assetBody').appendChild(tr); EA_updateStatus();
+  }
+  function EA_toggleOther(id,sel){EA('#'+id).style.display= sel.value==='Other' ? '' : 'none'; EA_updateStatus();}
+  function EA_addLiabilityRow(){
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input type="text" placeholder="Creditor / description"></td>
+      <td><select>${EA_LT.map(v=>EAopt(v)).join("")}</select></td>
+      <td><input type="text" placeholder="Account / Claim"></td>
+      <td><input type="number" min="0" step="0.01" placeholder="0.00"></td>
+      <td><input type="text" placeholder="Notes"></td>
+      <td class="row-actions">${EA_iconDelete()}</td>`;
+    EA('#ea-liabilityBody').appendChild(tr); EA_updateStatus();
+  }
+  function EA_delRow(btn){const tr=btn.closest('tr'); if(tr) tr.remove(); EA_updateStatus();}
+
+  /* Seed one row each */
+  EA_addMarriageRow(); EA_addRecipientRow(); EA_addAssetRow(); EA_addLiabilityRow();
+
+  /* Live status updater */
+  EA('#cifEstateApp').addEventListener('input',EA_updateStatus);
+  EA('#cifEstateApp').addEventListener('change',EA_updateStatus);
+
+  function EA_updateStatus(){
+    // Marital
+    const m = EA('#ea-maritalBody').rows.length;
+    EA('#ea-marital-status').textContent = `${m} ${m===1?'entry':'entries'}`;
+
+    // Distribution completeness + heir
+    const trs = Array.from(EA('#ea-recipientBody').rows||[]);
+    let complete=0, heir=false;
+    trs.forEach(tr=>{
+      const vals = Array.from(tr.querySelectorAll('input,select')).map(el=>(el.value||'').trim());
+      const ok = vals.every(v=>v);
+      if(ok) complete++;
+      const roleSel = tr.querySelector('select:nth-of-type(2)');
+      if(roleSel && roleSel.value === 'Heir at Law') heir = true;
+    });
+    EA('#ea-dl-status').textContent = `${complete}/${trs.length} complete • Heir at Law: ${heir?'Yes':'No'}`;
+
+    // Assets / Liabilities non-empty counts
+    const countNonEmpty = (tbody)=>Array.from((tbody||{}).rows||[]).reduce((n,tr)=>{
+      return n + (Array.from(tr.querySelectorAll('input,select')).some(el=>(el.value||'').trim()) ? 1 : 0);
+    },0);
+    const aItems = countNonEmpty(EA('#ea-assetBody'));
+    const lItems = countNonEmpty(EA('#ea-liabilityBody'));
+    EA('#ea-assets-status').textContent = `${aItems} ${aItems===1?'item':'items'}`;
+    EA('#ea-liab-status').textContent   = `${lItems} ${lItems===1?'debt':'debts'}`;
+  }
+
+  /* Validation */
+  function EA_requireTitle(){
+    const et=EA('#ea-estateTitle');
+    if(!et.value.trim()){et.classList.add('highlight-missing'); EA_toast('Please enter an Estate Title before exporting.'); et.focus(); return false;}
+    return true;
+  }
+  function EA_validateDistribution(){
+    let ok=true;
+    EAA('#ea-recipientBody tr').forEach(tr=>{
+      EAA('input,select',tr).forEach(el=>{
+        const required = el.hasAttribute('required');
+        const v=(el.value||'').trim();
+        if(required && !v){ ok=false; el.classList.add('highlight-missing'); }
+        el.addEventListener('input',()=>el.classList.remove('highlight-missing'),{once:true});
+        el.addEventListener('change',()=>el.classList.remove('highlight-missing'),{once:true});
+      });
+    });
+    if(!ok){EA_toast('Beneficiaries: complete Name, Relationship, Legal Role, Status, Capacity, and Address on each row.');}
+    return ok;
+  }
+
+  /* CSV build & export */
+  function EA_csvEscape(s=""){s=String(s); return (/[",\n]/.test(s)) ? '"'+s.replace(/"/g,'""')+'"' : s;}
+  function EA_row(vals){return vals.map(EA_csvEscape).join(",")+"\n";}
+  function EA_snake(s){return s.trim().toLowerCase().replace(/[^\w]+/g,"_").replace(/^_+|_+$/g,"");}
+  function EA_today(){const d=new Date(),z=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;}
+
+  function EA_buildCSV(){
+    const title = EA('#ea-estateTitle').value.trim();
+    let csv = "";
+    csv += EA_row(["Estate Title", title]); csv += "\n";
+
+    csv += EA_row(["Marital History"]);
+    csv += EA_row(["Spouse Full Name","Marriage Date","How Ended","End Date","Spouse Alive?","Children Count"]);
+    EAA('#ea-maritalBody tr').forEach(tr=>{
+      const [name, mdate, ended, edate, alive, kids] = EAA('td',tr).slice(0,6).map(td=>EA('input,select',td)?.value||"");
+      csv += EA_row([name,mdate,ended,edate,alive,kids]);
+    });
+    csv += "\n";
+
+    csv += EA_row(["Assets"]);
+    csv += EA_row(["Description","Type","Acct Last 4 / Parcel #","Value ($)","Notes"]);
+    EAA('#ea-assetBody tr').forEach(tr=>{
+      const desc = EA('td:nth-child(1) input',tr)?.value||"";
+      const typeSel = EA('td:nth-child(2) select',tr)?.value||"";
+      const otherTxt = EA('td:nth-child(2) input',tr)?.value||"";
+      const typeOut = typeSel==="Other" && otherTxt.trim() ? `Other - ${otherTxt.trim()}` : typeSel;
+      const acct = EA('td:nth-child(3) input',tr)?.value||"";
+      const val  = EA('td:nth-child(4) input',tr)?.value||"";
+      const notes= EA('td:nth-child(5) input',tr)?.value||"";
+      csv += EA_row([desc,typeOut,acct,val,notes]);
+    });
+    csv += "\n";
+
+    csv += EA_row(["Liabilities"]);
+    csv += EA_row(["Creditor / Liability Description","Type","Claim ID / Acct #","Balance Owed ($)","Notes"]);
+    EAA('#ea-liabilityBody tr').forEach(tr=>{
+      const cred = EA('td:nth-child(1) input',tr)?.value||"";
+      const typ  = EA('td:nth-child(2) select',tr)?.value||"";
+      const id   = EA('td:nth-child(3) input',tr)?.value||"";
+      const bal  = EA('td:nth-child(4) input',tr)?.value||"";
+      const notes= EA('td:nth-child(5) input',tr)?.value||"";
+      csv += EA_row([cred,typ,id,bal,notes]);
+    });
+    csv += "\n";
+
+    csv += EA_row(["Distribution List"]);
+    csv += EA_row(["Full Name / Entity","Relationship","Legal Role","Status","Capacity / Age","Address (City/State OK)"]);
+    EAA('#ea-recipientBody tr').forEach(tr=>{
+      const vals = EAA('td',tr).slice(0,6).map(td=>EA('input,select',td)?.value||"");
+      csv += EA_row(vals);
+    });
+
+    return csv;
+  }
+
+  function EA_readyToExport(){
+    EA_clearErrors();
+    if(!EA_requireTitle()) return false;
+    if(!EA_validateDistribution()) return false;
+    // Soft nudge if no assets/liabilities
+    const a = EA('#ea-assetBody').rows.length, l = EA('#ea-liabilityBody').rows.length;
+    if(a===0 && l===0){ EA_toast('Tip: Add Assets & Liabilities for a more complete record. Export will continue.'); }
+    return true;
+  }
+  function EA_filename(){const title=EA('#ea-estateTitle').value.trim(); return `Estate_Intake_${EA_snake(title)}_${EA_today()}.csv`;}
+  function EA_download(csv){const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=EA_filename(); document.body.appendChild(a); a.click(); URL.revokeObjectURL(a.href); a.remove();}
+
+  function EA_exportCSV(skipPreview=false){ if(!EA_readyToExport()) return; const csv=EA_buildCSV(); if(skipPreview){EA_download(csv);return;} EA_download(csv); }
+  function EA_openPreview(){ if(!EA_readyToExport()) return; const csv=EA_buildCSV(); EA('#ea-preview').textContent=csv; const m=EA('#ea-modal'); m.setAttribute('open',''); m.style.display='flex'; m.setAttribute('aria-hidden','false'); setTimeout(()=>EA('#ea-preview').focus(),30); }
+  function EA_closePreview(){ const m=EA('#ea-modal'); m.removeAttribute('open'); m.style.display='none'; m.setAttribute('aria-hidden','true'); }
+
+  /* Public alias to match spec: showPage('intake'|'inventory') */
+  window.showPage = EA_showPage;
+
+  /* Expose for inline handlers */
+  window.EA_showPage=EA_showPage;
+  window.EA_addMarriageRow=EA_addMarriageRow;
+  window.EA_addRecipientRow=EA_addRecipientRow;
+  window.EA_addAssetRow=EA_addAssetRow;
+  window.EA_addLiabilityRow=EA_addLiabilityRow;
+  window.EA_toggleOther=EA_toggleOther;
+  window.EA_delRow=EA_delRow;
+  window.EA_exportCSV=EA_exportCSV;
+  window.EA_openPreview=EA_openPreview;
+  window.EA_closePreview=EA_closePreview;
+  </script>
+</div>
