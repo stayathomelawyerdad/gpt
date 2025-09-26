@@ -28,9 +28,11 @@
     #cifEstateApp .row-2{grid-template-columns:1fr 1fr}
     @media (max-width:760px){#cifEstateApp .row-2{grid-template-columns:1fr}}
 
-    /* Intro */
-    #cifEstateApp .intro{background:var(--off);border-radius:18px;padding:26px 28px;box-shadow:0 16px 40px rgba(15,27,44,.08);margin-bottom:26px;border:1px solid var(--line)}
-    #cifEstateApp .intro p{margin:12px 0 0;font-size:15px;color:#343026}
+    /* Title card */
+    #cifEstateApp .title-card{background:var(--off);border-radius:22px;padding:30px 32px;box-shadow:0 18px 44px rgba(15,27,44,.1);margin-bottom:30px;border:1px solid var(--line);text-align:center}
+    #cifEstateApp .title-card label{font-family:var(--heading-font);font-size:18px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--navy);margin-bottom:18px}
+    #cifEstateApp .title-card input{max-width:420px;margin:0 auto;font-size:18px;font-weight:600;text-align:center;border-radius:16px;border:1px solid #beb6a3;padding:14px 18px}
+    #cifEstateApp .title-card .hint{margin-top:16px;font-size:13px;color:#4b4637}
 
     /* Buttons / tabs */
     #cifEstateApp .btn{appearance:none;border:0;border-radius:12px;padding:11px 16px;font-weight:600;cursor:pointer;transition:transform .02s ease,box-shadow .2s,outline-color .2s;background:var(--white);color:var(--navy);border:1px solid #d7d3c5}
@@ -82,13 +84,8 @@
   </style>
 
   <div class="wrap">
-    <section class="intro" aria-label="Estate intake overview">
-      <h1>Estate Information Form</h1>
-      <p>Provide the information below so our team can prepare an accurate estate intake summary for you. Complete each required section before exporting.</p>
-    </section>
-
     <!-- Global Title -->
-    <section class="card" aria-labelledby="ea-title-label">
+    <section class="card title-card" aria-labelledby="ea-title-label">
       <label id="ea-title-label" for="ea-estateTitle">Estate Title (e.g., “Estate of Jane Smith”)</label>
       <input id="ea-estateTitle" type="text" placeholder="Estate of Jane Smith" required/>
       <div class="hint">Used in CSV header and the export filename.</div>
